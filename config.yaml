@@ -1,0 +1,18 @@
+recency_hours: 26          # only items newer than this (slight overlap w/ 24h cron)
+max_items_total: 30        # cap the digest — precision over breadth
+max_per_topic: 6
+use_llm: false             # Phase 2 flag. Leave false until Phase 1 is solid.
+email_to: "design.kraftylumin@gmail.com"
+email_from: "design.kraftylumin@gmail.com"
+timezone: "Asia/Kolkata"
+noisy_tiers: ["C"]         # items from these tiers need >=2 keyword hits to qualify (extra noise filter)
+
+# Optional HN/Reddit boosters (Phase 1, no keys). Set enabled: false to skip either.
+hn:
+  enabled: true
+  queries: ["ai agents", "mcp protocol", "go-to-market", "sales automation"]
+  min_points: 30
+reddit:
+  enabled: true
+  subreddits: ["SaaS", "marketing", "sales", "msp"]
+  limit: 25

@@ -1,0 +1,12 @@
+# Keywords that decide relevance. Case-insensitive substring match on title + summary.
+# Edit freely to tune the digest — never edit Python to change what counts as relevant.
+
+topics:
+  ai:          ["ai", "llm", "model", "gpt", "claude", "gemini", "rag", "fine-tune", "inference"]
+  agents:      ["agent", "multi-agent", "mcp", "tool use", "autonomous", "langgraph", "crewai", "autogen"]
+  automation:  ["automation", "workflow", "no-code", "integration", "trigger", "orchestration"]
+  marketing:   ["marketing automation", "seo", "geo", "aeo", "content", "campaign", "attribution"]
+  sales:       ["sales automation", "outbound", "sequence", "revops", "revenue operations", "prospecting", "enrichment"]
+  gtm:         ["go-to-market", "gtm", "plg", "product-led", "signal", "partner ecosystem"]
+  abm:         ["account-based marketing", "abm", "intent data", "6sense", "demandbase", "target account"]
+  tam:         ["tam", "total addressable market", "market sizing", "sales methodology", "benchmark report"]
