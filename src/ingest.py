@@ -11,7 +11,7 @@ from __future__ import annotations
 import calendar
 import logging
 from datetime import datetime, timedelta, timezone
-from urllib.parse import urlsplit, parse_qs
+from urllib.parse import urlsplit, parse_qs, quote
 
 import feedparser
 import requests
@@ -50,6 +50,20 @@ def _clean_summary(entry) -> str:
     text = re.sub(r"<[^>]+>", " ", raw)
     text = re.sub(r"\s+", " ", text).strip()
     return text
+
+
+def _google_news_url(query: str) -> str:
+    """Build a free Google News RSS search feed URL for any query.
+
+    Google News aggregates the whole web for a query with no API key — this is
+    what gives 'overall internet' coverage. Article links are news.google.com
+    redirect wrappers that resolve to the real story on click; they're stable
+    per article so dedup still works.
+    """
+    return (
+        "https://news.google.com/rss/search?q="
+        f"{quote(query)}&hl=en-US&gl=US&ceid=US:en"
+    )
 
 
 def _unwrap_google_alert(url: str) -> str:
@@ -170,6 +184,32 @@ def _fetch_hn(cfg: dict) -> list[dict]:
     return items
 
 
+def _fetch_google_news(cfg: dict) -> list[dict]:
+    """Broad whole-web coverage: one Google News RSS search per configured topic."""
+    gn = (cfg or {}).get("google_news") or {}
+    if not gn.get("enabled"):
+        return []
+    queries = gn.get("queries") or []
+    items: list[dict] = []
+    for entry in queries:
+        if isinstance(entry, dict):
+            q = entry.get("q", "")
+            tags = entry.get("tags", []) or []
+        else:
+            q, tags = str(entry), []
+        if not q:
+            continue
+        feed = {
+            "url": _google_news_url(q),
+            "source": "Google News",
+            "tier": "C",  # noisy → subject to the >=2 keyword-hit gate
+            "tags": tags,
+        }
+        items.extend(_fetch_feed(feed))
+    log.info("ok Google News: %d items across %d queries", len(items), len(queries))
+    return items
+
+
 def _fetch_reddit(cfg: dict) -> list[dict]:
     rd = (cfg or {}).get("reddit") or {}
     if not rd.get("enabled"):
@@ -221,9 +261,20 @@ def fetch_all(feeds: list[dict], cfg: dict, seen: set[str]) -> list[dict]:
     recency_hours = int((cfg or {}).get("recency_hours", 26))
     cutoff = _now() - timedelta(hours=recency_hours)
 
+    gn_cfg = (cfg or {}).get("google_news") or {}
+    activate_c = bool(gn_cfg.get("activate_tier_c"))
+
     raw: list[dict] = []
     for feed in feeds or []:
-        raw.extend(_fetch_feed(feed))
+        f = feed
+        # Auto-activate unconfigured Tier-C companies via Google News instead of
+        # requiring a manual Google Alert per company. Uses the entry's `query`
+        # field if present, else the quoted source name.
+        if activate_c and feed.get("tier") == "C" and feed.get("url") == PLACEHOLDER:
+            query = feed.get("query") or f'"{feed.get("source", "")}"'
+            f = dict(feed, url=_google_news_url(query))
+        raw.extend(_fetch_feed(f))
+    raw.extend(_fetch_google_news(cfg))
     raw.extend(_fetch_hn(cfg))
     raw.extend(_fetch_reddit(cfg))
 

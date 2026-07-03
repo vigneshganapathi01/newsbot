@@ -1,11 +1,30 @@
-recency_hours: 26          # only items newer than this (slight overlap w/ 24h cron)
-max_items_total: 30        # cap the digest — precision over breadth
-max_per_topic: 6
+recency_hours: 48          # only items newer than this (wider window = more sources per digest)
+max_items_total: 50        # cap the digest
+max_per_topic: 10
 use_llm: false             # Phase 2 flag. Leave false until Phase 1 is solid.
 email_to: "vigneshg2k01@gmail.com"
 email_from: "vigneshg2k01@gmail.com"
 timezone: "Asia/Kolkata"
 noisy_tiers: ["C"]         # items from these tiers need >=2 keyword hits to qualify (extra noise filter)
+
+# Google News RSS — free whole-web coverage, no API key, no manual Google Alerts.
+#  - queries:        broad internet topics (each aggregates the entire web)
+#  - activate_tier_c: turn every unconfigured Tier-C company in feeds.yaml into a
+#                     Google News search automatically (uses each entry's `query`).
+google_news:
+  enabled: true
+  activate_tier_c: true
+  queries:
+    - { q: '"AI agents"',                 tags: [ai, agents] }
+    - { q: '"generative AI"',             tags: [ai] }
+    - { q: '"large language model"',      tags: [ai] }
+    - { q: '"AI automation" OR "workflow automation"', tags: [automation] }
+    - { q: '"go-to-market" strategy',     tags: [gtm] }
+    - { q: '"sales automation" OR "outbound sales"',   tags: [sales] }
+    - { q: '"account-based marketing"',   tags: [abm] }
+    - { q: '"marketing automation"',      tags: [marketing] }
+    - { q: '"AI startup" funding',        tags: [ai, gtm] }
+    - { q: '"model context protocol" OR "MCP servers"', tags: [agents] }
 
 # Optional HN/Reddit boosters (Phase 1, no keys). Set enabled: false to skip either.
 hn:

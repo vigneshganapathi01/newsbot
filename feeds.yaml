@@ -6,9 +6,10 @@
 # Tier B = GitHub releases.atom     (high reliability, the changelog IS the news)
 # Tier C = Google Alerts RSS        (medium reliability, slightly noisy)
 #
-# For Tier C: alerts.google.com -> create alert -> "Show options" -> Deliver to: RSS feed
-#             -> copy the generated feed URL -> paste below replacing PASTE_ALERT_RSS_URL.
-# Unset Tier-C entries (still holding the placeholder) simply log and skip — safe to fill in batches.
+# Tier C is auto-activated via Google News RSS (config.yaml -> google_news.activate_tier_c: true):
+# any entry still holding PASTE_ALERT_RSS_URL is fetched as a Google News search built from its
+# `query` field (falling back to the quoted source name). No manual Google Alerts needed.
+# To use a real native/Google-Alert feed instead, just replace PASTE_ALERT_RSS_URL with the URL.
 
 feeds:
   # ---------- Tier A: native RSS/Atom ----------
@@ -23,6 +24,9 @@ feeds:
   - { url: "https://blog.hubspot.com/marketing/rss.xml",            source: "HubSpot",      tier: A, tags: [marketing, sales] }
   - { url: "https://ahrefs.com/blog/feed/",                         source: "Ahrefs",       tier: A, tags: [marketing, seo] }
   - { url: "https://www.semrush.com/blog/feed/",                    source: "Semrush",      tier: A, tags: [marketing, seo] }
+  # General tech/AI press — broad "overall internet" coverage:
+  - { url: "https://techcrunch.com/category/artificial-intelligence/feed/",  source: "TechCrunch AI", tier: A, tags: [ai, agents, gtm] }
+  - { url: "https://www.theverge.com/rss/ai-artificial-intelligence/index.xml", source: "The Verge AI", tier: A, tags: [ai] }
   # NOTE: verify each Tier-A URL resolves at build time; if one 404s,
   # demote that source to a Tier-C Google Alert entry rather than deleting it.
 
@@ -36,31 +40,32 @@ feeds:
   - { url: "https://github.com/modelcontextprotocol/servers/releases.atom", source: "MCP",               tier: B, tags: [agents] }
   # Add any other OSS tool the same way: <org>/<repo>/releases.atom
 
-  # ---------- Tier C: Google Alerts RSS (create the alert, paste the feed URL) ----------
-  - { url: "PASTE_ALERT_RSS_URL", source: "Anthropic",       tier: C, tags: [ai, agents] }              # demoted from Tier A: no public RSS. query: "Anthropic" (Claude OR launch OR model)
-  - { url: "PASTE_ALERT_RSS_URL", source: "Clay",            tier: C, tags: [gtm, sales, marketing] }   # query: "Clay.com" (product OR feature OR update)
-  - { url: "PASTE_ALERT_RSS_URL", source: "Apollo",          tier: C, tags: [sales] }                   # query: "Apollo.io" (feature OR launch OR update)
-  - { url: "PASTE_ALERT_RSS_URL", source: "Lemlist",         tier: C, tags: [sales] }
-  - { url: "PASTE_ALERT_RSS_URL", source: "Instantly",       tier: C, tags: [sales] }
-  - { url: "PASTE_ALERT_RSS_URL", source: "Outreach",        tier: C, tags: [sales] }
-  - { url: "PASTE_ALERT_RSS_URL", source: "Salesloft",       tier: C, tags: [sales] }
-  - { url: "PASTE_ALERT_RSS_URL", source: "Gong",            tier: C, tags: [sales] }                   # also has a blog RSS; try Tier A first
-  - { url: "PASTE_ALERT_RSS_URL", source: "ZoomInfo",        tier: C, tags: [sales] }
-  - { url: "PASTE_ALERT_RSS_URL", source: "Workato",         tier: C, tags: [automation] }
-  - { url: "PASTE_ALERT_RSS_URL", source: "Lindy",           tier: C, tags: [automation, agents] }
-  - { url: "PASTE_ALERT_RSS_URL", source: "Relevance AI",    tier: C, tags: [automation, agents] }
-  - { url: "PASTE_ALERT_RSS_URL", source: "Relay.app",       tier: C, tags: [automation] }
-  - { url: "PASTE_ALERT_RSS_URL", source: "Make",            tier: C, tags: [automation] }              # blog RSS often exists; try Tier A first
-  - { url: "PASTE_ALERT_RSS_URL", source: "Crossbeam",       tier: C, tags: [gtm] }
-  - { url: "PASTE_ALERT_RSS_URL", source: "Common Room",     tier: C, tags: [gtm] }
-  - { url: "PASTE_ALERT_RSS_URL", source: "HockeyStack",     tier: C, tags: [gtm, marketing] }
-  - { url: "PASTE_ALERT_RSS_URL", source: "Mutiny",          tier: C, tags: [gtm, marketing] }
-  - { url: "PASTE_ALERT_RSS_URL", source: "Copy.ai",         tier: C, tags: [gtm, marketing] }
-  - { url: "PASTE_ALERT_RSS_URL", source: "Demandbase",      tier: C, tags: [abm] }                     # blog RSS often exists; try Tier A first
-  - { url: "PASTE_ALERT_RSS_URL", source: "6sense",          tier: C, tags: [abm] }                     # blog RSS often exists; try Tier A first
-  - { url: "PASTE_ALERT_RSS_URL", source: "Terminus",        tier: C, tags: [abm] }
-  - { url: "PASTE_ALERT_RSS_URL", source: "RollWorks",       tier: C, tags: [abm] }
-  - { url: "PASTE_ALERT_RSS_URL", source: "Winning by Design", tier: C, tags: [tam, sales] }
-  - { url: "PASTE_ALERT_RSS_URL", source: "Pavilion",        tier: C, tags: [tam, gtm] }
-  - { url: "PASTE_ALERT_RSS_URL", source: "Gartner",         tier: C, tags: [tam] }                     # press-release level only (paywalled)
-  - { url: "PASTE_ALERT_RSS_URL", source: "Forrester",       tier: C, tags: [tam] }                     # press-release level only (paywalled)
+  # ---------- Tier C: auto-activated via Google News RSS (uses `query`) ----------
+  # `query` is the Google News search string — kept specific to cut noise.
+  - { url: "PASTE_ALERT_RSS_URL", source: "Anthropic",   query: '"Anthropic" (Claude OR model OR launch)', tier: C, tags: [ai, agents] }
+  - { url: "PASTE_ALERT_RSS_URL", source: "Clay",        query: '"Clay.com" (product OR feature OR funding)', tier: C, tags: [gtm, sales, marketing] }
+  - { url: "PASTE_ALERT_RSS_URL", source: "Apollo",      query: '"Apollo.io" (feature OR launch OR update)',  tier: C, tags: [sales] }
+  - { url: "PASTE_ALERT_RSS_URL", source: "Lemlist",     query: '"lemlist"',            tier: C, tags: [sales] }
+  - { url: "PASTE_ALERT_RSS_URL", source: "Instantly",   query: '"Instantly.ai"',       tier: C, tags: [sales] }
+  - { url: "PASTE_ALERT_RSS_URL", source: "Outreach",    query: '"Outreach.io"',        tier: C, tags: [sales] }
+  - { url: "PASTE_ALERT_RSS_URL", source: "Salesloft",   query: '"Salesloft"',          tier: C, tags: [sales] }
+  - { url: "PASTE_ALERT_RSS_URL", source: "Gong",        query: '"Gong.io"',            tier: C, tags: [sales] }
+  - { url: "PASTE_ALERT_RSS_URL", source: "ZoomInfo",    query: '"ZoomInfo"',           tier: C, tags: [sales] }
+  - { url: "PASTE_ALERT_RSS_URL", source: "Workato",     query: '"Workato"',            tier: C, tags: [automation] }
+  - { url: "PASTE_ALERT_RSS_URL", source: "Lindy",       query: '"Lindy.ai" OR "Lindy AI"', tier: C, tags: [automation, agents] }
+  - { url: "PASTE_ALERT_RSS_URL", source: "Relevance AI", query: '"Relevance AI"',      tier: C, tags: [automation, agents] }
+  - { url: "PASTE_ALERT_RSS_URL", source: "Relay.app",   query: '"Relay.app"',          tier: C, tags: [automation] }
+  - { url: "PASTE_ALERT_RSS_URL", source: "Make",        query: '"Make.com" automation', tier: C, tags: [automation] }
+  - { url: "PASTE_ALERT_RSS_URL", source: "Crossbeam",   query: '"Crossbeam" (partner OR ecosystem)', tier: C, tags: [gtm] }
+  - { url: "PASTE_ALERT_RSS_URL", source: "Common Room", query: '"Common Room" (community OR platform)', tier: C, tags: [gtm] }
+  - { url: "PASTE_ALERT_RSS_URL", source: "HockeyStack", query: '"HockeyStack"',        tier: C, tags: [gtm, marketing] }
+  - { url: "PASTE_ALERT_RSS_URL", source: "Mutiny",      query: '"Mutiny" personalization', tier: C, tags: [gtm, marketing] }
+  - { url: "PASTE_ALERT_RSS_URL", source: "Copy.ai",     query: '"Copy.ai"',            tier: C, tags: [gtm, marketing] }
+  - { url: "PASTE_ALERT_RSS_URL", source: "Demandbase",  query: '"Demandbase"',         tier: C, tags: [abm] }
+  - { url: "PASTE_ALERT_RSS_URL", source: "6sense",      query: '"6sense"',             tier: C, tags: [abm] }
+  - { url: "PASTE_ALERT_RSS_URL", source: "Terminus",    query: '"Terminus" ABM',       tier: C, tags: [abm] }
+  - { url: "PASTE_ALERT_RSS_URL", source: "RollWorks",   query: '"RollWorks"',          tier: C, tags: [abm] }
+  - { url: "PASTE_ALERT_RSS_URL", source: "Winning by Design", query: '"Winning by Design"', tier: C, tags: [tam, sales] }
+  - { url: "PASTE_ALERT_RSS_URL", source: "Pavilion",    query: '"Pavilion" (GTM OR revenue community)', tier: C, tags: [tam, gtm] }
+  - { url: "PASTE_ALERT_RSS_URL", source: "Gartner",     query: '"Gartner" (AI OR sales OR marketing)', tier: C, tags: [tam] }  # press-release level (paywalled)
+  - { url: "PASTE_ALERT_RSS_URL", source: "Forrester",   query: '"Forrester" (AI OR sales OR marketing)', tier: C, tags: [tam] }  # press-release level (paywalled)
