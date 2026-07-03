@@ -27,6 +27,11 @@ feeds:
   # General tech/AI press — broad "overall internet" coverage:
   - { url: "https://techcrunch.com/category/artificial-intelligence/feed/",  source: "TechCrunch AI", tier: A, tags: [ai, agents, gtm] }
   - { url: "https://www.theverge.com/rss/ai-artificial-intelligence/index.xml", source: "The Verge AI", tier: A, tags: [ai] }
+  # Macro / industry-signal feeds (the "where is the market going" layer that
+  # vendor blogs can't give). Curated & verified free — NOT volume for its own sake.
+  - { url: "https://future.a16z.com/feed/",         source: "a16z",             tier: A, tags: [ai, gtm] }
+  - { url: "https://www.lennysnewsletter.com/feed", source: "Lenny's Newsletter", tier: A, tags: [gtm, marketing, sales] }
+  - { url: "https://importai.substack.com/feed",    source: "Import AI",        tier: A, tags: [ai, agents] }
   # NOTE: verify each Tier-A URL resolves at build time; if one 404s,
   # demote that source to a Tier-C Google Alert entry rather than deleting it.
 

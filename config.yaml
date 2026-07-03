@@ -2,6 +2,16 @@ recency_hours: 48          # only items newer than this (wider window = more sou
 max_items_total: 50        # cap the digest
 max_per_topic: 10
 use_llm: false             # Phase 2 flag. Leave false until Phase 1 is solid.
+
+# Daily "throughline" — a <=3-sentence synthesis of the day's items at the top of
+# the digest. Needs use_llm: true AND a free LLM key (else shows a heuristic line).
+throughline:
+  enabled: true
+
+# On-demand research (python -m src.research "topic"). Free Google News + HN backend.
+research:
+  recency_hours: 168       # default lookback (7 days)
+  max_items: 15
 email_to: "vigneshg2k01@gmail.com"
 email_from: "vigneshg2k01@gmail.com"
 timezone: "Asia/Kolkata"

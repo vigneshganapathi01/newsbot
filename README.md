@@ -101,15 +101,41 @@ The workflow runs at **01:30 UTC (07:00 IST)** daily and commits `seen.json` bac
 
 ---
 
-## Phase 2 — optional free-LLM summaries
+## Phase 2 — insight layer (free-LLM)
 
 **Do not enable until Phase 1 has emailed a correct, dedup'd digest for 2 consecutive days.**
 
 Set `use_llm: true` in `config.yaml` and add any of these GitHub secrets:
-`GEMINI_API_KEY`, `GROQ_API_KEY`, `OPENROUTER_API_KEY`.
+`GEMINI_API_KEY`, `GROQ_API_KEY`, `OPENROUTER_API_KEY` (Gemini free tier is the easiest).
 
-Fallback chain: **Gemini → Groq → OpenRouter → no-LLM floor** (raw snippet). Absent keys are
-skipped silently, so the digest degrades to snippets — it never breaks.
+Fallback chain: **Gemini → Groq → OpenRouter → floor**. Absent keys are skipped silently,
+so nothing ever breaks — it just degrades:
+- **Per-item summaries** → floor is the raw snippet.
+- **Daily throughline / research brief** → floor is a deterministic heuristic (still useful).
+
+### Daily throughline — "overall insight," not more volume
+A ≤3-sentence synthesis of the day's items at the **top of the digest** — the *what's actually
+happening / what shifted* line that vendor blogs can't give you. Controlled by:
+```yaml
+throughline: { enabled: true }   # needs use_llm: true + an LLM key to synthesize
+```
+Without a key it shows a one-line heuristic (item/topic/source counts) so you can see the slot.
+
+### On-demand research — "search everything on X right now" (free)
+A separate tool for ad-hoc deep-dives, backed by **Google News RSS + Hacker News** (no paid
+search API):
+```bash
+python -m src.research "AI agents in fintech"
+python -m src.research "6sense vs demandbase" --hours 336 --max 20
+python -m src.research "model context protocol" --email    # also email the brief
+```
+Fetches the most recent relevant items across the web, dedups, and — with an LLM key —
+returns a synthesized briefing (bottom-line + cited bullets). Without a key: a clean ranked
+list. Writes `research_<topic>.html` and prints to the console.
+
+> **Design note:** "pull from *all* websites" is deliberately **not** a goal — more input ≠ more
+> insight. Coverage is a curated set of high-signal feeds + broad Google News topic searches;
+> the *insight* comes from the synthesis layer above, not from scraping everything.
 
 ---
 

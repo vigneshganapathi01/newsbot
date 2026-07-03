@@ -28,7 +28,7 @@ def _floor(item: dict) -> str:
     return (item.get("summary") or "")[:200]
 
 
-def _gemini(prompt: str) -> str | None:
+def _gemini(prompt: str, max_tokens: int) -> str | None:
     key = os.environ.get("GEMINI_API_KEY")
     if not key:
         return None
@@ -39,7 +39,10 @@ def _gemini(prompt: str) -> str | None:
         )
         r = requests.post(
             url,
-            json={"contents": [{"parts": [{"text": prompt}]}]},
+            json={
+                "contents": [{"parts": [{"text": prompt}]}],
+                "generationConfig": {"maxOutputTokens": max_tokens},
+            },
             timeout=_TIMEOUT,
         )
         r.raise_for_status()
@@ -49,7 +52,7 @@ def _gemini(prompt: str) -> str | None:
         return None
 
 
-def _groq(prompt: str) -> str | None:
+def _groq(prompt: str, max_tokens: int) -> str | None:
     key = os.environ.get("GROQ_API_KEY")
     if not key:
         return None
@@ -60,7 +63,7 @@ def _groq(prompt: str) -> str | None:
             json={
                 "model": "llama-3.1-8b-instant",
                 "messages": [{"role": "user", "content": prompt}],
-                "max_tokens": 120,
+                "max_tokens": max_tokens,
             },
             timeout=_TIMEOUT,
         )
@@ -71,7 +74,7 @@ def _groq(prompt: str) -> str | None:
         return None
 
 
-def _openrouter(prompt: str) -> str | None:
+def _openrouter(prompt: str, max_tokens: int) -> str | None:
     key = os.environ.get("OPENROUTER_API_KEY")
     if not key:
         return None
@@ -82,7 +85,7 @@ def _openrouter(prompt: str) -> str | None:
             json={
                 "model": "meta-llama/llama-3.1-8b-instruct:free",
                 "messages": [{"role": "user", "content": prompt}],
-                "max_tokens": 120,
+                "max_tokens": max_tokens,
             },
             timeout=_TIMEOUT,
         )
@@ -93,12 +96,23 @@ def _openrouter(prompt: str) -> str | None:
         return None
 
 
+def complete(prompt: str, max_tokens: int = 120) -> str | None:
+    """Run a prompt through the free-LLM fallback chain.
+
+    Gemini -> Groq -> OpenRouter. Returns the first non-empty completion, or
+    None if every provider is absent/failed (so callers can apply their own
+    no-LLM floor). This is the shared primitive for both per-item summaries
+    (summarize) and multi-item synthesis (synthesis.py).
+    """
+    for provider in (_gemini, _groq, _openrouter):
+        out = provider(prompt, max_tokens)
+        if out:
+            return out
+    return None
+
+
 def summarize(item: dict) -> str:
     """Return a <=2-sentence summary, degrading gracefully to the raw snippet."""
     content = (item.get("summary") or "")[:1500]
     prompt = _PROMPT.format(title=item.get("title", ""), content=content)
-    for provider in (_gemini, _groq, _openrouter):
-        out = provider(prompt)
-        if out:
-            return out
-    return _floor(item)
+    return complete(prompt, max_tokens=120) or _floor(item)

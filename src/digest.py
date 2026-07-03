@@ -45,11 +45,27 @@ def _esc(text: str) -> str:
     return html.escape(text or "")
 
 
-def build(grouped: dict[str, list[dict]], cfg: dict) -> tuple[str, str, bool]:
+def _throughline_box(text: str) -> str:
+    if not text:
+        return ""
+    safe = _esc(text).replace("\n", "<br>")
+    return (
+        '<div style="background:#f3f0ff;border:1px solid #d0bfff;border-radius:8px;'
+        'padding:14px 16px;margin:16px 0 8px;">'
+        '<div style="font-size:11px;font-weight:700;letter-spacing:0.5px;'
+        'color:#7048e8;text-transform:uppercase;margin-bottom:6px;">🧭 Today\'s throughline</div>'
+        f'<div style="font-size:14px;color:#343a40;line-height:1.55;">{safe}</div>'
+        "</div>"
+    )
+
+
+def build(grouped: dict[str, list[dict]], cfg: dict, throughline: str = "") -> tuple[str, str, bool]:
     """Return (subject, html_body, is_empty).
 
     is_empty is True when there were no new items — main.py still sends a short
     "alive" email so a silent pipeline is distinguishable from a broken one.
+    `throughline` (optional) is the synthesized "what's happening today" line
+    rendered under the header.
     """
     tz_name = (cfg or {}).get("timezone", "UTC")
     today = datetime.now(timezone.utc)
@@ -83,6 +99,7 @@ def build(grouped: dict[str, list[dict]], cfg: dict) -> tuple[str, str, bool]:
         f'<div style="{styles}">',
         f'<h2 style="margin-bottom:4px;">📰 NewsBot Daily Digest</h2>',
         f'<p style="color:#6c757d;margin-top:0;">{_esc(date_str)} · {total} items</p>',
+        _throughline_box(throughline),
     ]
 
     ordered_topics = [t for t in TOPIC_ORDER if t in grouped]

@@ -20,10 +20,10 @@ import yaml
 if __package__ in (None, ""):
     sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     from src import digest, ingest, rank, send, state  # type: ignore
-    from src import summarize  # type: ignore
+    from src import summarize, synthesis  # type: ignore
 else:
     from . import digest, ingest, rank, send, state
-    from . import summarize
+    from . import summarize, synthesis
 
 logging.basicConfig(
     level=logging.INFO,
@@ -57,13 +57,20 @@ def run(local: bool = False) -> int:
     items = ingest.fetch_all(feeds, cfg, seen)
     grouped = rank.process(items, topics, cfg)
 
+    throughline = ""
     if cfg.get("use_llm"):
         log.info("use_llm=true → summarizing %d items", sum(len(v) for v in grouped.values()))
         for group in grouped.values():
             for it in group:
                 it["summary"] = summarize.summarize(it)
 
-    subject, body, is_empty = digest.build(grouped, cfg)
+    # The daily throughline synthesizes the day's items into a "what's happening"
+    # line. Enabled independently of per-item summaries via config.
+    if cfg.get("throughline", {}).get("enabled") and cfg.get("use_llm"):
+        flat = _flatten(grouped)
+        throughline = synthesis.throughline(flat)
+
+    subject, body, is_empty = digest.build(grouped, cfg, throughline=throughline)
 
     if local:
         out = os.path.join(ROOT, "digest.html")
