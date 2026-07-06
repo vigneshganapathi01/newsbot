@@ -74,3 +74,15 @@ feeds:
   - { url: "PASTE_ALERT_RSS_URL", source: "Pavilion",    query: '"Pavilion" (GTM OR revenue community)', tier: C, tags: [tam, gtm] }
   - { url: "PASTE_ALERT_RSS_URL", source: "Gartner",     query: '"Gartner" (AI OR sales OR marketing)', tier: C, tags: [tam] }  # press-release level (paywalled)
   - { url: "PASTE_ALERT_RSS_URL", source: "Forrester",   query: '"Forrester" (AI OR sales OR marketing)', tier: C, tags: [tam] }  # press-release level (paywalled)
+
+  # ---- GTM tools (added on request) — no native RSS, covered via Google News ----
+  - { url: "PASTE_ALERT_RSS_URL", source: "ColdIQ",      query: '"ColdIQ"',                              tier: C, tags: [gtm, sales] }
+  - { url: "PASTE_ALERT_RSS_URL", source: "Genesys",     query: '"Genesys" (AI OR launch OR "contact center")', tier: C, tags: [gtm, sales] }
+  - { url: "PASTE_ALERT_RSS_URL", source: "Workflow.io", query: '"Workflow.io"',                         tier: C, tags: [gtm, automation] }  # ambiguous name — confirm exact domain if wrong
+  - { url: "PASTE_ALERT_RSS_URL", source: "Clari",       query: '"Clari" (revenue OR forecast OR RevOps)', tier: C, tags: [gtm, sales] }
+  - { url: "PASTE_ALERT_RSS_URL", source: "Chili Piper", query: '"Chili Piper"',                         tier: C, tags: [gtm, sales] }
+  - { url: "PASTE_ALERT_RSS_URL", source: "Warmly",      query: '"Warmly.ai" OR "Warmly" (sales OR signal)', tier: C, tags: [gtm, sales] }
+  - { url: "PASTE_ALERT_RSS_URL", source: "Amplemarket", query: '"Amplemarket"',                         tier: C, tags: [gtm, sales] }
+  - { url: "PASTE_ALERT_RSS_URL", source: "Smartlead",   query: '"Smartlead"',                           tier: C, tags: [gtm, sales] }
+  - { url: "PASTE_ALERT_RSS_URL", source: "Koala",       query: '"Koala.live" OR "getkoala"',            tier: C, tags: [gtm] }
+  - { url: "PASTE_ALERT_RSS_URL", source: "Unify",       query: '"Unify GTM" OR "Unify.ai"',             tier: C, tags: [gtm] }
