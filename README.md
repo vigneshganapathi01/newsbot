@@ -11,6 +11,8 @@ it to you — with source links — using **zero paid subscriptions and no paid 
 - **No duplicates.** `seen.json` (committed back by the workflow) prevents re-sends.
 - **Feeds, not scrapers.** Every source is an Atom/RSS feed — including GitHub releases and Google Alerts.
 
+> 🌐 **Landing page:** [`index.html`](index.html) is a zero-build marketing page for NewsBot — one designed section per feature, matching the digest's palette. Open it locally, or publish it free via GitHub Pages (**Settings → Pages → Source: GitHub Actions**); the [`deploy-landing-page`](.github/workflows/pages.yml) workflow ships it on every push to `main`.
+
 ---
 
 ## Quick start (local test — no email needed)
