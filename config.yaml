@@ -12,8 +12,11 @@ throughline:
 research:
   recency_hours: 168       # default lookback (7 days)
   max_items: 15
-email_to: "vigneshg2k01@gmail.com"
-email_from: "vigneshg2k01@gmail.com"
+# Recipient / sender. Left blank on purpose so no personal email is committed to a
+# public repo. Resolved at runtime from env: EMAIL_TO / EMAIL_FROM, else GMAIL_USER
+# (the address you already send from). Set these here only for a private fork.
+email_to: ""
+email_from: ""
 timezone: "Asia/Kolkata"
 noisy_tiers: ["C"]         # items from these tiers need >=2 keyword hits to qualify (extra noise filter)
 

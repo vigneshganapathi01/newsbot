@@ -45,6 +45,18 @@ def _flatten(grouped: dict[str, list[dict]]) -> list[dict]:
     return [it for group in grouped.values() for it in group]
 
 
+def resolve_emails(cfg: dict) -> tuple[str, str]:
+    """Resolve (to, from) addresses without committing a personal email.
+
+    Precedence: env EMAIL_TO/EMAIL_FROM → config value → GMAIL_USER (the address
+    you already authenticate with). Keeps the public repo free of personal data.
+    """
+    gmail_user = os.environ.get("GMAIL_USER", "")
+    to = os.environ.get("EMAIL_TO") or cfg.get("email_to") or gmail_user
+    frm = os.environ.get("EMAIL_FROM") or cfg.get("email_from") or gmail_user
+    return to, frm
+
+
 def run(local: bool = False) -> int:
     feeds = _load_yaml("feeds.yaml").get("feeds", [])
     topics = _load_yaml("topics.yaml").get("topics", {})
@@ -79,7 +91,8 @@ def run(local: bool = False) -> int:
         log.info("[local] wrote %s (subject: %s, empty=%s)", out, subject, is_empty)
         return 0
 
-    send.send(subject, body, cfg["email_to"], cfg["email_from"])
+    to_addr, from_addr = resolve_emails(cfg)
+    send.send(subject, body, to_addr, from_addr)
 
     # Persist what we sent so it never re-sends. (Empty digests add nothing.)
     sent = _flatten(grouped)
@@ -104,11 +117,12 @@ def main() -> int:
             # Best-effort: email the error to ourselves so a broken run is visible.
             try:
                 cfg = _load_yaml("config.yaml")
+                to_addr, from_addr = resolve_emails(cfg)
                 send.send(
                     "⚠️ NewsBot run FAILED",
                     f"<h3>NewsBot crashed</h3><pre>{err}</pre>",
-                    cfg["email_to"],
-                    cfg["email_from"],
+                    to_addr,
+                    from_addr,
                 )
             except Exception as exc2:  # noqa: BLE001
                 log.error("could not send failure email: %s", exc2)

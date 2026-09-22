@@ -20,9 +20,10 @@ from datetime import datetime, timedelta, timezone
 # Support both `python -m src.research` and `python src/research.py`.
 if __package__ in (None, ""):
     sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-    from src import ingest, state, synthesis, send  # type: ignore
+    from src import ingest, state, synthesis, send, main as _main  # type: ignore
 else:
     from . import ingest, state, synthesis, send
+    from . import main as _main
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 log = logging.getLogger("newsbot.research")
@@ -156,8 +157,9 @@ def main() -> int:
     print(f"\nWrote {out}")
 
     if args.email:
-        send.send(f"🔎 Research: {args.query}", html, cfg["email_to"], cfg["email_from"])
-        print(f"Emailed to {cfg['email_to']}")
+        to_addr, from_addr = _main.resolve_emails(cfg)
+        send.send(f"🔎 Research: {args.query}", html, to_addr, from_addr)
+        print(f"Emailed to {to_addr}")
     return 0
 
 
