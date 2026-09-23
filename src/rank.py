@@ -111,6 +111,15 @@ def process(items: list[dict], topics: dict, cfg: dict) -> dict[str, list[dict]]
         score, topic, hits = _score_and_assign(it, topics)
         tier = it.get("tier", "?")
 
+        # LinkedIn (Pulse via Google News): give it a guaranteed section instead of
+        # letting thought-leadership pieces get outscored by breaking news. Forced
+        # into the 'linkedin' topic, always qualifies (subject to caps). Only the
+        # freshest survive the recency window + per-topic cap, so it stays curated.
+        if it.get("source", "").startswith("LinkedIn"):
+            it["_score"], it["_topic"] = score + 0.5, "linkedin"
+            qualified.append(it)
+            continue
+
         # Tier B (GitHub releases): a new release of a tracked tool is inherently
         # relevant — always include (subject to caps), keywords secondary.
         if tier == "B":
@@ -135,14 +144,24 @@ def process(items: list[dict], topics: dict, cfg: dict) -> dict[str, list[dict]]
         if len(grouped[it["_topic"]]) < max_per_topic:
             grouped[it["_topic"]].append(it)
 
-    # Enforce the global cap while preserving topic grouping, taking the highest
-    # scored items across all topics first.
-    all_selected = sorted(
-        (it for group in grouped.values() for it in group),
+    # Enforce the global cap while preserving topic grouping. First reserve the top
+    # `reserve_per_topic` items of every topic so smaller sections (models, video,
+    # audio, LinkedIn) aren't starved by high-volume breaking news; then fill the
+    # remaining slots by global score. Groups are already score-desc.
+    reserve = int((cfg or {}).get("reserve_per_topic", 2))
+    selected_ids: set[int] = set()
+    for group in grouped.values():
+        for it in group[:reserve]:
+            selected_ids.add(id(it))
+    remaining = sorted(
+        (it for group in grouped.values() for it in group if id(it) not in selected_ids),
         key=lambda x: x["_score"],
         reverse=True,
-    )[:max_total]
-    selected_ids = {id(it) for it in all_selected}
+    )
+    for it in remaining:
+        if len(selected_ids) >= max_total:
+            break
+        selected_ids.add(id(it))
 
     final: dict[str, list[dict]] = {}
     for topic, group in grouped.items():

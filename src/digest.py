@@ -14,18 +14,23 @@ log = logging.getLogger("newsbot.digest")
 
 TOPIC_TITLES = {
     "ai": "🧠 AI & LLMs",
+    "models": "🧩 Free & Open Models",
     "agents": "🤖 Agents",
-    "automation": "⚙️ Automation",
+    "automation": "⚙️ Automation & Workflow",
+    "video": "🎬 AI Video",
+    "audio": "🔊 AI Audio & Voice",
     "marketing": "📣 Marketing",
     "sales": "💼 Sales",
     "gtm": "🚀 Go-To-Market",
     "abm": "🎯 ABM",
     "tam": "📊 TAM & Research",
     "seo": "🔎 SEO",
+    "linkedin": "💬 LinkedIn Pulse",
 }
 
 # Preferred display order; any extra topics get appended after.
-TOPIC_ORDER = ["ai", "agents", "automation", "marketing", "sales", "gtm", "abm", "tam", "seo"]
+TOPIC_ORDER = ["ai", "models", "agents", "automation", "video", "audio",
+               "marketing", "sales", "gtm", "abm", "tam", "seo", "linkedin"]
 
 TIER_BADGE = {"A": "native", "B": "release", "C": "alert"}
 

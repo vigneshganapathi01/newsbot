@@ -4,7 +4,10 @@
 topics:
   ai:          ["ai", "llm", "model", "gpt", "claude", "gemini", "rag", "fine-tune", "inference"]
   agents:      ["agent", "multi-agent", "mcp", "tool use", "autonomous", "langgraph", "crewai", "autogen"]
-  automation:  ["automation", "workflow", "no-code", "integration", "trigger", "orchestration"]
+  automation:  ["automation", "workflow", "no-code", "low-code", "integration", "trigger", "orchestration", "rpa", "n8n", "zapier", "make.com", "workflow automation", "agentic workflow"]
+  models:      ["open-source model", "open model", "open weights", "open-weights", "free tier", "free api", "gguf", "quantized", "llama 3", "llama 4", "mistral", "mixtral", "qwen", "deepseek", "gemma", "phi-3", "phi-4", "ollama", "hugging face", "vllm", "llama.cpp", "fine-tune", "distillation"]
+  video:       ["ai video", "text-to-video", "video generation", "video model", "sora", "runway", "gen-3", "pika", "luma", "dream machine", "kling", "veo", "hunyuan", "mochi", "wan 2", "stable video", "comfyui", "image-to-video"]
+  audio:       ["text-to-speech", "tts", "speech-to-text", "voice clone", "voice cloning", "speech synthesis", "elevenlabs", "whisper", "music generation", "suno", "udio", "audio generation", "voice ai", "realtime voice", "speech model"]
   marketing:   ["marketing automation", "seo", "geo", "aeo", "content", "campaign", "attribution"]
   sales:       ["sales automation", "outbound", "sequence", "revops", "revenue operations", "prospecting", "enrichment"]
   gtm:         ["go-to-market", "gtm", "plg", "product-led", "signal", "partner ecosystem"]

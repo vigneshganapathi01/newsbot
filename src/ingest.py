@@ -195,13 +195,14 @@ def _fetch_google_news(cfg: dict) -> list[dict]:
         if isinstance(entry, dict):
             q = entry.get("q", "")
             tags = entry.get("tags", []) or []
+            src = entry.get("source", "Google News")  # optional per-query label
         else:
-            q, tags = str(entry), []
+            q, tags, src = str(entry), [], "Google News"
         if not q:
             continue
         feed = {
             "url": _google_news_url(q),
-            "source": "Google News",
+            "source": src,
             "tier": "C",  # noisy → subject to the >=2 keyword-hit gate
             "tags": tags,
         }

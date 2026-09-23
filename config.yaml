@@ -1,6 +1,7 @@
 recency_hours: 48          # only items newer than this (wider window = more sources per digest)
-max_items_total: 50        # cap the digest
-max_per_topic: 10
+max_items_total: 70        # cap the digest (raised for the added AI/model/video/audio/LinkedIn sections)
+max_per_topic: 8
+reserve_per_topic: 2       # guarantee the top N of every topic survives the global cap (keeps small sections visible)
 use_llm: false             # Phase 2 flag. Leave false until Phase 1 is solid.
 
 # Daily "throughline" — a <=3-sentence synthesis of the day's items at the top of
@@ -39,10 +40,36 @@ google_news:
     - { q: '"AI startup" funding',        tags: [ai, gtm] }
     - { q: '"model context protocol" OR "MCP servers"', tags: [agents] }
 
+    # ---- New AI features / free & open models / video / audio / automation ----
+    - { q: '"open source" (LLM OR "language model" OR "open weights")', tags: [models, ai] }
+    - { q: '"free" (LLM OR "AI API" OR "AI model") launch', tags: [models, ai] }
+    - { q: 'Llama OR Mistral OR Qwen OR DeepSeek OR Gemma model release', tags: [models, ai] }
+    - { q: 'Ollama OR vLLM OR "Hugging Face" (model OR release OR feature)', tags: [models, ai] }
+    - { q: '"AI video" OR "text-to-video" OR "video generation"', tags: [video, ai] }
+    - { q: 'Sora OR Runway OR Pika OR "Luma AI" OR Kling OR "Google Veo"', tags: [video, ai] }
+    - { q: '"text-to-speech" OR "voice cloning" OR "AI voice"', tags: [audio, ai] }
+    - { q: 'ElevenLabs OR Suno OR Udio OR Whisper (AI OR audio OR music)', tags: [audio, ai] }
+    - { q: '"AI automation" OR "agentic workflow" OR "workflow automation"', tags: [automation, agents] }
+    - { q: '"new AI feature" OR "AI feature launch" (OpenAI OR Google OR Anthropic OR Meta OR Microsoft)', tags: [ai] }
+
+    # ---- LinkedIn coverage (public Pulse articles only; raw posts are not free) ----
+    # LinkedIn has no free feed/API for status posts. Google News indexes public
+    # LinkedIn Pulse (long-form) articles, reachable via the site: operator. This
+    # surfaces industry thought-leadership per topic — not short status updates.
+    - { q: '"AI agents" site:linkedin.com/pulse',        source: "LinkedIn", tags: [linkedin, ai, agents] }
+    - { q: '"generative AI" site:linkedin.com/pulse',    source: "LinkedIn", tags: [linkedin, ai] }
+    - { q: '"go-to-market" OR GTM site:linkedin.com/pulse', source: "LinkedIn", tags: [linkedin, gtm] }
+    - { q: '"sales automation" OR outbound site:linkedin.com/pulse', source: "LinkedIn", tags: [linkedin, sales] }
+    - { q: '"account-based marketing" OR ABM site:linkedin.com/pulse', source: "LinkedIn", tags: [linkedin, abm] }
+    - { q: '"marketing automation" site:linkedin.com/pulse', source: "LinkedIn", tags: [linkedin, marketing] }
+    - { q: '"AI automation" OR "workflow automation" site:linkedin.com/pulse', source: "LinkedIn", tags: [linkedin, automation] }
+
 # Optional HN/Reddit boosters (Phase 1, no keys). Set enabled: false to skip either.
 hn:
   enabled: true
-  queries: ["ai agents", "mcp protocol", "go-to-market", "sales automation"]
+  queries: ["ai agents", "mcp protocol", "go-to-market", "sales automation",
+            "open source llm", "local llm", "text to video", "text to speech",
+            "workflow automation", "free ai model"]
   min_points: 30
 reddit:
   enabled: true

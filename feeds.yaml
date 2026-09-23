@@ -43,6 +43,15 @@ feeds:
   - { url: "https://github.com/FlowiseAI/Flowise/releases.atom",            source: "Flowise",           tier: B, tags: [automation, agents] }
   - { url: "https://github.com/openai/openai-agents-python/releases.atom",  source: "OpenAI Agents SDK", tier: B, tags: [agents] }
   - { url: "https://github.com/modelcontextprotocol/servers/releases.atom", source: "MCP",               tier: B, tags: [agents] }
+  # ---- Free/open models, inference & AI media tooling (the release IS the news) ----
+  - { url: "https://github.com/ollama/ollama/releases.atom",                source: "Ollama",            tier: B, tags: [models, ai] }
+  - { url: "https://github.com/vllm-project/vllm/releases.atom",            source: "vLLM",              tier: B, tags: [models, ai] }
+  - { url: "https://github.com/ggml-org/llama.cpp/releases.atom",           source: "llama.cpp",         tier: B, tags: [models, ai] }
+  - { url: "https://github.com/huggingface/transformers/releases.atom",     source: "Transformers",      tier: B, tags: [models, ai] }
+  - { url: "https://github.com/unslothai/unsloth/releases.atom",            source: "Unsloth",           tier: B, tags: [models, ai] }
+  - { url: "https://github.com/comfyanonymous/ComfyUI/releases.atom",       source: "ComfyUI",           tier: B, tags: [video, ai] }
+  - { url: "https://github.com/n8n-io/n8n/releases.atom",                   source: "n8n (releases)",    tier: B, tags: [automation] }
+  - { url: "https://github.com/langflow-ai/langflow/releases.atom",         source: "Langflow",          tier: B, tags: [automation, agents] }
   # Add any other OSS tool the same way: <org>/<repo>/releases.atom
 
   # ---------- Tier C: auto-activated via Google News RSS (uses `query`) ----------
@@ -86,3 +95,16 @@ feeds:
   - { url: "PASTE_ALERT_RSS_URL", source: "Smartlead",   query: '"Smartlead"',                           tier: C, tags: [gtm, sales] }
   - { url: "PASTE_ALERT_RSS_URL", source: "Koala",       query: '"Koala.live" OR "getkoala"',            tier: C, tags: [gtm] }
   - { url: "PASTE_ALERT_RSS_URL", source: "Unify",       query: '"Unify GTM" OR "Unify.ai"',             tier: C, tags: [gtm] }
+
+  # ---- AI media & model vendors (no reliable native RSS → Google News) ----
+  - { url: "PASTE_ALERT_RSS_URL", source: "Runway",      query: '"Runway" ("Gen-3" OR "Gen-4" OR video OR model)', tier: C, tags: [video, ai] }
+  - { url: "PASTE_ALERT_RSS_URL", source: "Pika",        query: '"Pika Labs" OR "Pika" AI video',        tier: C, tags: [video, ai] }
+  - { url: "PASTE_ALERT_RSS_URL", source: "Luma AI",     query: '"Luma AI" OR "Dream Machine"',          tier: C, tags: [video, ai] }
+  - { url: "PASTE_ALERT_RSS_URL", source: "Kling",       query: '"Kling AI" video',                      tier: C, tags: [video, ai] }
+  - { url: "PASTE_ALERT_RSS_URL", source: "ElevenLabs",  query: '"ElevenLabs" (voice OR audio OR model)', tier: C, tags: [audio, ai] }
+  - { url: "PASTE_ALERT_RSS_URL", source: "Suno",        query: '"Suno AI" music',                       tier: C, tags: [audio, ai] }
+  - { url: "PASTE_ALERT_RSS_URL", source: "Mistral AI",  query: '"Mistral AI" (model OR release OR launch)', tier: C, tags: [models, ai] }
+  - { url: "PASTE_ALERT_RSS_URL", source: "DeepSeek",    query: '"DeepSeek" (model OR release)',         tier: C, tags: [models, ai] }
+  - { url: "PASTE_ALERT_RSS_URL", source: "Groq",        query: '"Groq" ("free tier" OR inference OR API)', tier: C, tags: [models, ai] }
+  - { url: "PASTE_ALERT_RSS_URL", source: "Together AI", query: '"Together AI" (model OR "free" OR inference)', tier: C, tags: [models, ai] }
+  - { url: "PASTE_ALERT_RSS_URL", source: "OpenRouter",  query: '"OpenRouter" ("free model" OR model)',  tier: C, tags: [models, ai] }
