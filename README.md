@@ -145,7 +145,8 @@ list. Writes `research_<topic>.html` and prints to the console.
 
 - **Gartner/Forrester:** research is paywalled — free coverage is press-release level only (via Google Alerts).
 - **Google Alerts feeds are noisier** than native blogs; the ≥2-hit gate mitigates but doesn't eliminate it.
-- **LinkedIn/X:** excluded by design — not reachable free without fragile scraping.
+- **LinkedIn:** public **Pulse articles** are covered (via Google News `site:linkedin.com/pulse`, shown in their own 💬 LinkedIn Pulse section). Raw LinkedIn *status posts* have no free feed/API and are still excluded — reaching them needs a paid provider or fragile scraping.
+- **X/Twitter:** excluded by design — not reachable free without fragile scraping.
 
 ## Cost
 **₹0.** Free public feeds + GitHub releases + Google Alerts RSS + Gmail SMTP + GitHub Actions only.
